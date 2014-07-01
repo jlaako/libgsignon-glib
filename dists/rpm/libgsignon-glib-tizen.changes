@@ -1,3 +1,6 @@
+* Tue Jul 01 2014 Imran Zaman <imran.zaman@intel.com>
+- Release 2.3.0 added reference API implementation
+
 * Thu Mar 06 2014 Jussi Laako <jussi.laako@linux.intel.com>
 - Release 2.1.0 including API alignment with libsignon-glib
 

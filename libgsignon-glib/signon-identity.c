@@ -251,6 +251,14 @@ typedef struct _IdentityCredentialsUpdateCbData
     gpointer user_data;
 } IdentityCredentialsUpdateCbData;
 
+typedef struct _IdentityReferenceCbData
+{
+    SignonIdentity *self;
+    gchar *reference;
+    SignonIdentityVoidCb cb;
+    gpointer user_data;
+} IdentityReferenceCbData;
+
 typedef struct _IdentityVoidCbData
 {
     SignonIdentity *self;
@@ -1604,6 +1612,155 @@ identity_void_operation(SignonIdentity *self,
                                     operation_data);
 }
 
+static void
+identity_reference_added_reply (GObject *object, GAsyncResult *res,
+                        gpointer userdata)
+{
+    SsoIdentity *proxy = SSO_IDENTITY (object);
+    gint result;
+    GError *error = NULL;
+    IdentityReferenceCbData *cb_data = (IdentityReferenceCbData *)userdata;
+
+    g_return_if_fail (cb_data != NULL);
+    g_return_if_fail (cb_data->self != NULL);
+    g_return_if_fail (cb_data->self->priv != NULL);
+
+    sso_identity_call_add_reference_finish (proxy, &result, res, &error);
+
+    if (SIGNON_IS_NOT_CANCELLED (error) && cb_data->cb)
+    {
+        (cb_data->cb) (cb_data->self, error, cb_data->user_data);
+    }
+
+    g_clear_error(&error);
+    g_free (cb_data->reference);
+    g_slice_free (IdentityReferenceCbData, cb_data);
+}
+
+static void
+identity_reference_removed_reply (GObject *object, GAsyncResult *res,
+                        gpointer userdata)
+{
+    SsoIdentity *proxy = SSO_IDENTITY (object);
+    gint result;
+    GError *error = NULL;
+    IdentityReferenceCbData *cb_data = (IdentityReferenceCbData *)userdata;
+
+    g_return_if_fail (cb_data != NULL);
+    g_return_if_fail (cb_data->self != NULL);
+    g_return_if_fail (cb_data->self->priv != NULL);
+
+    sso_identity_call_remove_reference_finish (proxy, &result, res, &error);
+
+    if (SIGNON_IS_NOT_CANCELLED (error) && cb_data->cb)
+    {
+        (cb_data->cb) (cb_data->self, error, cb_data->user_data);
+    }
+
+    g_clear_error(&error);
+    g_free (cb_data->reference);
+    g_slice_free (IdentityReferenceCbData, cb_data);
+}
+
+static void
+identity_add_reference_ready_cb(gpointer object, const GError *error,
+    gpointer user_data)
+{
+    g_return_if_fail (SIGNON_IS_IDENTITY (object));
+
+    SignonIdentity *self = SIGNON_IDENTITY (object);
+    SignonIdentityPrivate *priv = self->priv;
+    g_return_if_fail (priv != NULL);
+
+    DEBUG ("%s %d", G_STRFUNC, __LINE__);
+    IdentityReferenceCbData *cb_data = (IdentityReferenceCbData *)user_data;
+    g_return_if_fail (cb_data != NULL);
+
+    if (priv->removed == TRUE)
+    {
+        GError *new_error = g_error_new (signon_error_quark(),
+                                          SIGNON_ERROR_IDENTITY_NOT_FOUND,
+                                         "Already removed from database.");
+        if (cb_data->cb)
+        {
+            (cb_data->cb) (self, new_error, cb_data->user_data);
+        }
+
+        g_error_free (new_error);
+        g_free (cb_data->reference);
+        g_slice_free (IdentityReferenceCbData, cb_data);
+    }
+    else if (error)
+    {
+        DEBUG ("IdentityError: %s", error->message);
+        if (cb_data->cb)
+        {
+            (cb_data->cb) (self, error, cb_data->user_data);
+        }
+
+        g_free (cb_data->reference);
+        g_slice_free (IdentityReferenceCbData, cb_data);
+    }
+    else
+    {
+        g_return_if_fail (priv->proxy != NULL);
+        sso_identity_call_add_reference (priv->proxy,
+                                  cb_data->reference,
+                                  priv->cancellable,
+                                  identity_reference_added_reply,
+                                  cb_data);
+    }
+}
+
+static void
+identity_remove_reference_ready_cb(gpointer object, const GError *error,
+    gpointer user_data)
+{
+    g_return_if_fail (SIGNON_IS_IDENTITY (object));
+
+    SignonIdentity *self = SIGNON_IDENTITY (object);
+    SignonIdentityPrivate *priv = self->priv;
+    g_return_if_fail (priv != NULL);
+
+    DEBUG ("%s %d", G_STRFUNC, __LINE__);
+    IdentityReferenceCbData *cb_data = (IdentityReferenceCbData *)user_data;
+    g_return_if_fail (cb_data != NULL);
+
+    if (priv->removed == TRUE)
+    {
+        GError *new_error = g_error_new (signon_error_quark(),
+                                          SIGNON_ERROR_IDENTITY_NOT_FOUND,
+                                         "Already removed from database.");
+        if (cb_data->cb)
+        {
+            (cb_data->cb) (self, new_error, cb_data->user_data);
+        }
+
+        g_error_free (new_error);
+        g_free (cb_data->reference);
+        g_slice_free (IdentityReferenceCbData, cb_data);
+    }
+    else if (error)
+    {
+        DEBUG ("IdentityError: %s", error->message);
+        if (cb_data->cb)
+        {
+            (cb_data->cb) (self, error, cb_data->user_data);
+        }
+        g_free (cb_data->reference);
+        g_slice_free (IdentityReferenceCbData, cb_data);
+    }
+    else
+    {
+        g_return_if_fail (priv->proxy != NULL);
+        sso_identity_call_remove_reference (priv->proxy,
+                                  cb_data->reference,
+                                  priv->cancellable,
+                                  identity_reference_removed_reply,
+                                  cb_data);
+    }
+}
+
 /**
  * signon_identity_remove:
  * @self: the #SignonIdentity.
@@ -1720,10 +1877,17 @@ void signon_identity_add_reference(SignonIdentity *self,
     SignonIdentityPrivate *priv = self->priv;
     g_return_if_fail (priv != NULL);
 
-    //TODO implement
+    IdentityReferenceCbData *cb_data = g_slice_new0 (IdentityReferenceCbData);
+    cb_data->self = self;
+    cb_data->reference = g_strdup (reference);
+    cb_data->cb = (SignonIdentityVoidCb)cb;
+    cb_data->user_data = user_data;
 
-    if (cb)
-        (cb) (self, NULL, user_data);
+    identity_check_remote_registration (self);
+    _signon_object_call_when_ready (self,
+                                    identity_object_quark(),
+                                    identity_add_reference_ready_cb,
+                                    cb_data);
 }
 
 /**
@@ -1745,10 +1909,17 @@ void signon_identity_remove_reference(SignonIdentity *self,
     SignonIdentityPrivate *priv = self->priv;
     g_return_if_fail (priv != NULL);
 
-    //TODO implement
+    IdentityReferenceCbData *cb_data = g_slice_new0 (IdentityReferenceCbData);
+    cb_data->self = self;
+    cb_data->reference = g_strdup (reference);
+    cb_data->cb = (SignonIdentityVoidCb)cb;
+    cb_data->user_data = user_data;
 
-    if (cb)
-        (cb) (self, NULL, user_data);
+    identity_check_remote_registration (self);
+    _signon_object_call_when_ready (self,
+                                    identity_object_quark(),
+                                    identity_remove_reference_ready_cb,
+                                    cb_data);
 }
 
 /**

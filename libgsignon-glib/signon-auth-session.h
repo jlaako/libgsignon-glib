@@ -81,7 +81,6 @@ typedef enum {
 
 /**
  * SignonAuthSessionState:
- *
  * @SIGNON_AUTH_SESSION_STATE_NOT_STARTED: No message.
  * @SIGNON_AUTH_SESSION_STATE_RESOLVING_HOST: Resolving remote server host name.
  * @SIGNON_AUTH_SESSION_STATE_CONNECTING: Connecting to remote server.

@@ -956,11 +956,113 @@ START_TEST(test_remove_identity)
     /*
      * Try to remove already removed
      * */
-
     signon_identity_remove(idty2, identity_remove_cb, GINT_TO_POINTER(TRUE));
 
     g_object_unref (idty);
     g_object_unref (idty2);
+}
+END_TEST
+
+static void identity_ref_add_cb(SignonIdentity *self, const GError *error,
+    gpointer user_data)
+{
+    g_warning (" %s ", __func__);
+    if (error)
+    {
+        g_warning ("Error: %s ", error->message);
+        fail_if (user_data == NULL, "There should be no error in callback");
+    }
+    else
+    {
+        g_warning ("No error");
+        fail_if (user_data != NULL, "The callback must return an error");
+    }
+
+    _stop_mainloop ();
+}
+
+static void identity_ref_remove_cb(SignonIdentity *self, const GError *error,
+    gpointer user_data)
+{
+    g_warning (" %s ", __func__);
+    if (error)
+    {
+        g_warning ("Error: %s ", error->message);
+        fail_if (user_data == NULL, "There should be no error in callback");
+    }
+    else
+    {
+        g_warning ("No error");
+        fail_if (user_data != NULL, "The callback must return an error");
+    }
+
+    _stop_mainloop ();
+}
+
+START_TEST(test_referenc_remove_identity)
+{
+    g_debug("%s", G_STRFUNC);
+    SignonIdentity *idty = signon_identity_new ();
+    fail_unless (idty != NULL);
+    fail_unless (SIGNON_IS_IDENTITY (idty),
+                 "Failed to initialize the Identity.");
+
+    /*
+     * Try to remove non-existing reference
+     * */
+    signon_identity_remove_reference(idty, "no-ref", identity_ref_remove_cb,
+        GINT_TO_POINTER(TRUE));
+    _run_mainloop ();
+
+    gint id = new_identity();
+    SignonIdentity *idty2 = signon_identity_new_from_db (id);
+    signon_identity_add_reference(idty2, "app-rem1", identity_ref_add_cb,
+        NULL);
+    _run_mainloop ();
+
+    /*
+     * Try to remove existing reference
+     * */
+    signon_identity_remove_reference(idty2, "app-rem1", identity_remove_cb,
+        NULL);
+    _run_mainloop ();
+
+    g_object_unref (idty);
+    g_object_unref (idty2);
+}
+END_TEST
+
+START_TEST(test_referenc_add_identity)
+{
+    g_debug("%s", G_STRFUNC);
+
+    gint id = new_identity();
+    SignonIdentity *idty = signon_identity_new_from_db (id);
+    fail_unless (idty != NULL);
+    fail_unless (SIGNON_IS_IDENTITY (idty),
+                 "Failed to initialize the Identity.");
+    /*
+     * Try to add non-existing reference
+     * */
+    signon_identity_add_reference(idty, "app1", identity_ref_add_cb,
+        NULL);
+    _run_mainloop ();
+
+    /*
+     * Try to add an existing reference (which replaces the old one)
+     * */
+    signon_identity_add_reference(idty, "app1", identity_ref_add_cb,
+        NULL);
+    _run_mainloop ();
+
+    /*
+     * Try to add another reference
+     * */
+    signon_identity_add_reference(idty, "app2", identity_ref_add_cb,
+        NULL);
+    _run_mainloop ();
+
+    g_object_unref (idty);
 }
 END_TEST
 
@@ -1483,6 +1585,8 @@ signon_suite(void)
     tcase_add_test (tc_core, test_auth_session_process_after_store);
     tcase_add_test (tc_core, test_store_credentials_identity);
     tcase_add_test (tc_core, test_remove_identity);
+    tcase_add_test (tc_core, test_referenc_remove_identity);
+    tcase_add_test (tc_core, test_referenc_add_identity);
     tcase_add_test (tc_core, test_info_identity);
 
     tcase_add_test (tc_core, test_query_identities);
