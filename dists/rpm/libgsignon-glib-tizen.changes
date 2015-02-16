@@ -1,5 +1,16 @@
+* Thu Feb 12 2015 Imran Zaman <imran.zaman@intel.com>
+- Corrected and updated widl file along with web SSO API extension
+- Fix typo in reading identity type from variant and updated tests
+- Fixed issues found by coverity
+
+* Fri Aug 15 2014 Imran Zaman <imran.zaman@intel.com>
+- Added plugin dependencies
+
 * Tue Jul 01 2014 Imran Zaman <imran.zaman@intel.com>
 - Release 2.3.0 added reference API implementation
+
+* Wed Jun 25 2014 Jussi Laako <jussi.laako@linux.intel.com>
+- Release 2.2.0
 
 * Thu Mar 06 2014 Jussi Laako <jussi.laako@linux.intel.com>
 - Release 2.1.0 including API alignment with libsignon-glib

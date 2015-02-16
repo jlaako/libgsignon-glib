@@ -42,6 +42,11 @@ signon_query_methods_cb (SignonAuthService *auth_service, gchar **methods,
         return;
     }
 
+    if (!methods) {
+        g_warning ("%s: %s", G_STRFUNC, "NULL methods");
+        return;
+    }
+
     gchar **pmethods = methods;
 
     g_print("Available authentication methods:\n");
@@ -50,7 +55,7 @@ signon_query_methods_cb (SignonAuthService *auth_service, gchar **methods,
         g_print("\t%s\n", *pmethods);
         pmethods++;
     }
-    if (methods) g_strfreev (methods);
+    g_strfreev (methods);
     g_main_loop_quit (user_data);
 }
 
@@ -80,6 +85,11 @@ signon_query_mechanisms_cb (SignonAuthService *auth_service,
         return;
     }
 
+    if (!mechanisms) {
+        g_warning("%s: %s", G_STRFUNC, "NULL mechanisms");
+        return;
+    }
+
     gchar **pmechanisms = mechanisms;
 
     g_print("Available authentication mechanisms for method %s:\n", method);
@@ -88,7 +98,7 @@ signon_query_mechanisms_cb (SignonAuthService *auth_service,
         g_print("\t%s\n", *pmechanisms);
         pmechanisms++;
     }
-    if (mechanisms) g_strfreev (mechanisms);
+    g_strfreev (mechanisms);
     g_main_loop_quit (user_data);
 }
 
@@ -121,7 +131,6 @@ static void signon_query_identities_cb (SignonAuthService *auth_service,
     while (iter)
     {
         SignonIdentityInfo *info = (SignonIdentityInfo *) iter->data;
-        const gchar *caption = signon_identity_info_get_caption (info);
 
         g_print ("\tid=%d caption='%s' ACL:",
                  signon_identity_info_get_id (info),

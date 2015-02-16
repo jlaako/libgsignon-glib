@@ -207,7 +207,7 @@ signon_identity_info_new_from_variant (GVariant *variant)
 
     g_variant_lookup (variant,
                       SIGNOND_IDENTITY_INFO_TYPE,
-                      "u",
+                      "i",
                       &info->type);
 
     return info;

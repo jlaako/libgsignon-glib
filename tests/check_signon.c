@@ -1106,6 +1106,9 @@ static void identity_info_cb(SignonIdentity *self, SignonIdentityInfo *info, con
          fail_unless (g_strcmp0 (signon_identity_info_get_caption(info),
                                  signon_identity_info_get_caption(pattern)) == 0, "The info has wrong caption");
 
+         fail_unless (signon_identity_info_get_identity_type (info) == signon_identity_info_get_identity_type (pattern),
+            "Wrong identity type");
+
          GHashTable *methods = (GHashTable *)signon_identity_info_get_methods (info);
          gchar **mechs1 = g_hash_table_lookup (methods, "method1");
          gchar **mechs2 = g_hash_table_lookup (methods, "method2");
@@ -1197,7 +1200,7 @@ START_TEST(test_info_identity)
                                                  NULL,
                                                  NULL,
                                                  NULL,
-                                                 0,
+                                                 SIGNON_IDENTITY_TYPE_WEB,
                                                  store_credentials_identity_cb,
                                                  NULL);
     _run_mainloop ();
@@ -1218,6 +1221,7 @@ START_TEST(test_info_identity)
     signon_identity_info_set_method (info, "method1", (const gchar **)mechanisms);
     signon_identity_info_set_method (info, "method2", (const gchar **)mechanisms);
     signon_identity_info_set_method (info, "method3", (const gchar **)mechanisms);
+    signon_identity_info_set_identity_type (info, SIGNON_IDENTITY_TYPE_WEB);
 
     signon_identity_query_info (idty, identity_info_cb, &info);
     _run_mainloop ();

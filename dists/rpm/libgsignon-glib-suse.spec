@@ -3,7 +3,7 @@
 
 Name:       libgsignon-glib
 Summary:    GLib API for the SSO framework
-Version:    2.3.0
+Version:    2.4.0
 Release:    1
 Group:      System/Libraries
 License:    LGPL-2.1
@@ -79,6 +79,11 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu Feb 12 2015 Imran Zaman <imran.zaman@intel.com>
+- Corrected and updated widl file along with web SSO API extension
+- Fix typo in reading identity type from variant and updated tests
+- Fixed issues found by coverity
+
 * Tue Jul 01 2014 Imran Zaman <imran.zaman@intel.com>
 - Release 2.3.0 added reference API implementation
 

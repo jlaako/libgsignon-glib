@@ -1,3 +1,11 @@
+partial interface Tizen {
+	readonly attribute SSO sso;
+}
+
+interface SSO {
+	readonly attribute AuthService authService;
+}
+
 enum IdentityType {
 	"application",
 	"web",
@@ -32,19 +40,41 @@ dictionary MechanismQueryResult {
 	DOMString[] mechanisms;
 };
 
+dictionary SecurityContext {
+	DOMString sysContext;
+	DOMString appContext;
+};
+
 dictionary IdentityFilterItem {
-	DOMString key;
-	DOMString value;
+	IdentityType type;
+	DOMString caption;
+	SecurityContext owner;
 };
 
-interface AuthService {
-	Promise queryMethods(); // returns DOMString[]
-	Promise queryMechanisms(DOMString method); // returns MechanismQueryResult
-	Promise queryIdentities(IdentityFilterItem[] filter); // returns IdentityInfo[]
-	Promise getIdentity(long id);  // returns existing Identity object
-	Promise clear();
+dictionary ACLEntry {
+	SecurityContext secContext;
+	DOMString method;
+	DOMString[] mechanisms;
 };
 
+dictionary VerifyUserParams {
+	DOMString forgotPasswordUrl;
+	DOMString title;
+	DOMString caption;
+	DOMString message;
+	DOMString captchaUrl;
+};
+
+dictionary IdentityInfo {
+	IdentityType type;
+	DOMString username;
+	DOMString secret;
+	boolean storeSecret;
+	DOMString caption;
+	DOMString[] realms;
+	SecurityContext owner;
+	ACLEntry[] accessControlList;
+};
 
 dictionary SessionData {
 	// default properties
@@ -63,6 +93,7 @@ dictionary SessionData {
 	// this dictionary is extended with method/mechanism specific items
 };
 
+[NoInterfaceObject]
 interface AuthSession : EventTarget {
 	readonly attribute DOMString method;
 	readonly attribute SessionState state;
@@ -74,55 +105,33 @@ interface AuthSession : EventTarget {
 	attribute EventHandler onstatechanged;
 };
 
-dictionary SecurityContext {
-	DOMString sysContext;
-	DOMString appContext;
-};
-
-dictionary ACLEntry {
-	SecurityContext secContext;
-	DOMString method;
-	DOMString[] mechanisms;
-};
-
-dictionary IdentityInfo {
-	readonly attribute long id;
-	IdentityType type;
-	DOMString username;
-	DOMString secret;
-	boolean storeSecret;
-	DOMString caption;
-	DOMString[] realms;
-	SecurityContext owner;
-	ACLEntry[] accessControlList;
-};
-
-
-dictionary VerifyUserPrompt {
-	DOMString forgotPasswordUrl;
-	DOMString title;
-	DOMString caption;
-	DOMString message;
-	DOMString captchaUrl;
-};
-
-
 Identity implements IdentityInfo;
 
-[Constructor(IdentityInfo info)]
+[NoInterfaceObject]
 interface Identity {
+	readonly attribute long id;
 
-	Promise startSession(DOMString method);  // returns AuthSession object
+	Promise getSession(DOMString method);  // returns AuthSession object
 	Promise requestCredentialsUpdate(DOMString message);
 	Promise store();
+	Promise storeWithInfo(IdentityInfo info);
 	Promise addReference(DOMString reference);
 	Promise removeReference(DOMString reference);
 	Promise verifyUser(DOMString message);
-	Promise verifyUser(VerifyUserPrompt params);
+	Promise verifyUserPrompt(VerifyUserParams params);
 	Promise remove();
 	Promise signOut();
 
 	attribute EventHandler onsignedout;
 	attribute EventHandler onremoved;
+};
+
+interface AuthService {
+	Promise createIdentity(IdentityInfo info);  // returns new Identity object
+	Promise getIdentity(long id); // returns existing Identity object
+	Promise queryMethods(); // returns DOMString[]
+	Promise queryMechanisms(DOMString method); // returns MechanismQueryResult
+	Promise queryIdentities(IdentityFilterItem filter); // returns IdentityInfo[]
+	Promise clear();
 };
 
