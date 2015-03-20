@@ -209,6 +209,22 @@ typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
 
 CLEANFILES += $(gir_DATA) $(typelib_DATA)
 endif
+# Vala bindings
+if ENABLE_VAPIGEN
+-include $(VAPIGEN_MAKEFILE)
+libgsignon-glib.vapi: gSignon-1.0.gir libgsignon-glib.deps gSignon-1.0-custom.vala
+
+VAPIGEN_VAPIS = libgsignon-glib.vapi
+
+libgsignon_glib_vapi_DEPS = gio-2.0 glib-2.0
+libgsignon_glib_vapi_METADATADIRS = $(srcdir)
+libgsignon_glib_vapi_FILES = gSignon-1.0.gir $(srcdir)/gSignon-1.0-custom.vala
+
+vapidir = $(datadir)/vala/vapi
+vapi_DATA = $(VAPIGEN_VAPIS) $(VAPIGEN_VAPIS:.vapi=.deps)
+
+CLEANFILES += $(VAPIGEN_VAPIS)
+endif
 
 dbusinterfacesdir = $(DBUS_INTERFACES_DIR)
 dbusinterfaces_DATA = \
@@ -218,7 +234,3 @@ dbusinterfaces_DATA = \
 
 EXTRA_DIST = interfaces
 
-# Vala bindings
-#vapidir = $(datadir)/vala/vapi
-#dist_vapi_DATA = \
-#	gsignon.vapi

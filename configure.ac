@@ -26,6 +26,7 @@ LT_INIT([disable-static])
 
 # Gobject Introspection
 GOBJECT_INTROSPECTION_CHECK([1.30.0])
+VAPIGEN_CHECK()
 
 PKG_CHECK_MODULES(
     [DEPS],
