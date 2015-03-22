@@ -80,7 +80,7 @@ static void identity_methods_copy (gpointer key,
 /**
  * signon_identity_info_set_methods:
  * @info: the #SignonIdentityInfo.
- * @methods: (transfer none): (element-type utf8 GStrv): methods.
+ * @methods: (transfer none) (element-type utf8 GStrv): methods.
  *
  * Set authentication methods that are allowed to be used with this identity.
  */
@@ -105,7 +105,7 @@ void signon_identity_info_set_methods (SignonIdentityInfo *info,
 /**
  * signon_identity_info_own_methods:
  * @info: the #SignonIdentityInfo.
- * @methods: (transfer none): (element-type utf8 GStrv): methods.
+ * @methods: (transfer none) (element-type utf8 GStrv): methods.
  *
  * Set authentication methods that are allowed to be used with this identity.
  *
@@ -453,7 +453,7 @@ const gchar *signon_identity_info_get_caption (const SignonIdentityInfo *info)
  * Get a hash table of the methods and mechanisms of @info. See 
  * signon_identity_info_set_methods().
  *
- * Returns: (transfer none): (element-type utf8 GStrv): the table of allowed
+ * Returns: (transfer none) (element-type utf8 GStrv): the table of allowed
  * methods and mechanisms.
  */
 GHashTable *signon_identity_info_get_methods (const SignonIdentityInfo *info)

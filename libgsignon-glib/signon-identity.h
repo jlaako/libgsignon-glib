@@ -44,7 +44,7 @@ typedef struct _SignonIdentityClass SignonIdentityClass;
 typedef struct _SignonIdentityPrivate SignonIdentityPrivate;
 
 /**
- * SignonIdentityClass:
+ * _SignonIdentityClass: (skip):
  * @parent_class: reference to a parent class
  *
  * Opaque struct. Use the accessor functions below.
@@ -55,7 +55,7 @@ struct _SignonIdentityClass
 };
 
 /**
- * SignonIdentity:
+ * _SignonIdentity: (skip):
  *
  * Opaque struct. Use the accessor functions below.
  */
