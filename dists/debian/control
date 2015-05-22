@@ -12,8 +12,8 @@ Build-Depends: autotools-dev,
                pkg-config
 Standards-Version: 3.9.5
 Homepage: https://01.org/gsso
-Vcs-Git: http://code.google.com/p/accounts-sso.libgsignon-glib/
-Vcs-Browser: http://code.google.com/p/accounts-sso/source/browse/?repo=libgsignon-glib
+Vcs-Git: https://gitlab.com/accounts-sso/libgsignon-glib.git
+Vcs-Browser: https://gitlab.com/accounts-sso/libgsignon-glib/tree/master
 
 Package: libgsignon-glib1
 Architecture: any

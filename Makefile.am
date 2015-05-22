@@ -47,15 +47,15 @@ update-online-doc:
 	@tar zxf $(PACKAGE)-$(VERSION).tar.gz && \
 	pushd . > /dev/null && \
 	cd .. && \
-	git clone https://code.google.com/p/accounts-sso.gsignon-docs/ ; \
-	cd accounts-sso.gsignon-docs && \
+	git clone https://gitlab.com/accounts-sso/gsignon-docs.git ; \
+	cd gsignon-docs && \
 	git pull ; \
 	mkdir -p $(PACKAGE) && \
 	rm -rf $(PACKAGE)/* && \
 	popd > /dev/null && \
-	cp -rf $(PACKAGE)-$(VERSION)/docs/reference/html/* ../accounts-sso.gsignon-docs/$(PACKAGE)/ && \
+	cp -rf $(PACKAGE)-$(VERSION)/docs/reference/html/* ../gsignon-docs/$(PACKAGE)/ && \
 	pushd . > /dev/null && \
-	cd ../accounts-sso.gsignon-docs && \
+	cd ../gsignon-docs && \
 	git add $(PACKAGE)/* && \
 	git commit -m "Updated documentation for $(PACKAGE) to version $(VERSION)" && \
 	git push ; \
