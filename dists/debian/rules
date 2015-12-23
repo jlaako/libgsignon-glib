@@ -24,5 +24,4 @@ override_dh_auto_test:
 
 .PHONY: override_dh_strip
 override_dh_strip:
-	dh_strip --dbg-package=libgsignon-glib-dbg
-
+	dh_strip --dbg-package=libgsignon-glib1-dbg

@@ -140,36 +140,29 @@ auth_session_process_reply (GObject *object, GAsyncResult *res,
 {
     SignonAuthSession *self;
     SsoAuthSession *proxy = SSO_AUTH_SESSION (object);
-    GSimpleAsyncResult *res_process = (GSimpleAsyncResult *)userdata;
+    GTask *task = G_TASK (userdata);
     GVariant *reply;
     GError *error = NULL;
 
-    g_return_if_fail (res_process != NULL);
+    g_return_if_fail (task != NULL);
     DEBUG ("%s %d", G_STRFUNC, __LINE__);
 
     sso_auth_session_call_process_finish (proxy, &reply, res, &error);
 
     self = SIGNON_AUTH_SESSION (g_async_result_get_source_object (
-        (GAsyncResult *)res_process));
+        (GAsyncResult *)task));
     self->priv->busy = FALSE;
 
     if (G_LIKELY (error == NULL))
     {
-        g_simple_async_result_set_op_res_gpointer (res_process, reply,
-                                                   (GDestroyNotify)
-                                                   g_variant_unref);
+        g_task_return_pointer (task, reply, (GDestroyNotify) g_variant_unref);
     }
     else
     {
-        g_simple_async_result_take_error (res_process, error);
+        g_task_return_error (task, error);
     }
 
-    /* We use the idle variant in order to avoid the following critical
-     * message:
-     * g_main_context_pop_thread_default: assertion `g_queue_peek_head (stack) == context' failed
-     */
-    g_simple_async_result_complete_in_idle (res_process);
-    g_object_unref (res_process);
+    g_object_unref (task);
     g_object_unref (self);
 }
 
@@ -178,7 +171,7 @@ auth_session_process_ready_cb (gpointer object, const GError *error, gpointer us
 {
     SignonAuthSession *self = SIGNON_AUTH_SESSION (object);
     SignonAuthSessionPrivate *priv;
-    GSimpleAsyncResult *res = G_SIMPLE_ASYNC_RESULT (user_data);
+    GTask *task = G_TASK (user_data);
     AuthSessionProcessData *process_data;
 
     g_return_if_fail (self != NULL);
@@ -186,10 +179,10 @@ auth_session_process_ready_cb (gpointer object, const GError *error, gpointer us
 
     if (error != NULL)
     {
-        DEBUG ("AuthSessionError: %s", error->message);
-        g_simple_async_result_set_from_error (res, error);
-        g_simple_async_result_complete (res);
-        g_object_unref (res);
+        GError *error_copy = g_error_copy (error);
+        DEBUG ("AuthSessionError: %s", error_copy->message);
+        g_task_return_error (task, error_copy);
+        g_object_unref (task);
         return;
     }
 
@@ -197,18 +190,16 @@ auth_session_process_ready_cb (gpointer object, const GError *error, gpointer us
     {
         priv->busy = FALSE;
         priv->canceled = FALSE;
-        g_simple_async_result_set_error (res,
-                                         signon_error_quark (),
-                                         SIGNON_ERROR_SESSION_CANCELED,
-                                         "Authentication session was canceled");
-        g_simple_async_result_complete (res);
-        g_object_unref (res);
+        g_task_return_new_error (task, signon_error_quark (),
+                                 SIGNON_ERROR_SESSION_CANCELED,
+                                 "Authentication session was canceled");
+        g_object_unref (task);
         return;
     }
 
     DEBUG ("%s %d", G_STRFUNC, __LINE__);
 
-    process_data = g_object_get_data ((GObject *)res, data_key_process);
+    process_data = g_task_get_task_data (task);
     g_return_if_fail (process_data != NULL);
 
     sso_auth_session_call_process (priv->proxy,
@@ -216,7 +207,7 @@ auth_session_process_ready_cb (gpointer object, const GError *error, gpointer us
                                    process_data->mechanism,
                                    process_data->cancellable,
                                    auth_session_process_reply,
-                                   res);
+                                   task);
 }
 
 static void
@@ -625,24 +616,20 @@ signon_auth_session_process_async (SignonAuthSession *self,
                                    gpointer user_data)
 {
     SignonAuthSessionPrivate *priv;
+    GTask *task;
     AuthSessionProcessData *process_data;
-    GSimpleAsyncResult *res;
 
+    g_return_if_fail (session_data != NULL);
     g_return_if_fail (SIGNON_IS_AUTH_SESSION (self));
     priv = self->priv;
 
-    g_return_if_fail (session_data != NULL);
-
-    res = g_simple_async_result_new ((GObject *)self, callback, user_data,
-                                     signon_auth_session_process_async);
-    g_simple_async_result_set_check_cancellable (res, cancellable);
+    task = g_task_new (self, cancellable, callback, user_data);
 
     process_data = g_slice_new0 (AuthSessionProcessData);
     process_data->session_data = g_variant_ref_sink (session_data);
     process_data->mechanism = g_strdup (mechanism);
     process_data->cancellable = cancellable;
-    g_object_set_data_full ((GObject *)res, data_key_process, process_data,
-                            (GDestroyNotify)auth_session_process_data_free);
+    g_task_set_task_data (task, process_data, (GDestroyNotify) auth_session_process_data_free);
 
     priv->busy = TRUE;
 
@@ -650,7 +637,7 @@ signon_auth_session_process_async (SignonAuthSession *self,
     _signon_object_call_when_ready (self,
                                     auth_session_object_quark(),
                                     auth_session_process_ready_cb,
-                                    res);
+                                    task);
 }
 
 /**
@@ -675,17 +662,9 @@ GVariant *
 signon_auth_session_process_finish (SignonAuthSession *self, GAsyncResult *res,
                                     GError **error)
 {
-    GSimpleAsyncResult *async_result;
-    GVariant *reply;
+    g_return_val_if_fail (g_task_is_valid (res, self), NULL);
 
-    g_return_val_if_fail (SIGNON_IS_AUTH_SESSION (self), NULL);
-
-    async_result = (GSimpleAsyncResult *)res;
-    if (g_simple_async_result_propagate_error (async_result, error))
-        return NULL;
-
-    reply = g_simple_async_result_get_op_res_gpointer (async_result);
-    return g_variant_ref (reply);
+    return g_task_propagate_pointer (G_TASK (res), error);
 }
 
 /**

@@ -5,7 +5,7 @@ This project is a library for managing single signon credentilas which can be
 used from GLib applications. It is effectively a GLib binding for the D-Bus API
 provided by signond. It is part of the accounts-sso project:
 
-http://code.google.com/p/accounts-sso/
+https://gitlab.com/groups/accounts-sso
 
 Dependencies
 ------------
@@ -20,4 +20,4 @@ The library is licensed under the GNU LGPL version 2.1.
 Resources
 ---------
 
-http://code.google.com/p/accounts-sso/sources/list?repo=libgsignon-glib
+https://gitlab.com/accounts-sso/libgsignon-glib/tree/master

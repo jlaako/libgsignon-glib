@@ -2,9 +2,9 @@ dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.64])
 AC_INIT([libgsignon-glib],
         [2.4.0],
-        [http://code.google.com/p/accounts-sso/issues/entry],
+        [https://gitlab.com/accounts-sso/libgsignon-glib/issues],
         [libgsignon-glib],
-        [http://code.google.com/p/accounts-sso/])
+        [https://gitlab.com/groups/accounts-sso])
 
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_HEADERS([config.h])
@@ -26,10 +26,11 @@ LT_INIT([disable-static])
 
 # Gobject Introspection
 GOBJECT_INTROSPECTION_CHECK([1.30.0])
+VAPIGEN_CHECK()
 
 PKG_CHECK_MODULES(
     [DEPS],
-    [gio-2.0 >= 2.30
+    [gio-2.0 >= 2.36
      gio-unix-2.0
      glib-2.0 >= 2.32
      gobject-2.0,

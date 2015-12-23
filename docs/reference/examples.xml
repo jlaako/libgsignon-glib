@@ -22,8 +22,8 @@
     </para>
     <para>
         The source code for the example application is available at
-        <ulink url="http://code.google.com/p/accounts-sso/source/browse/examples/gsso-example.c?repo=libgsignon-glib&amp;name=master">
-            http://code.google.com/p/accounts-sso/source/browse/examples/gsso-example.c?repo=libgsignon-glib&amp;name=master</ulink>
+        <ulink url="https://gitlab.com/accounts-sso/libgsignon-glib/blob/master/examples/gsso-example.c">
+            https://gitlab.com/accounts-sso/libgsignon-glib/blob/master/examples/gsso-example.c</ulink>
      </para>
      <para>
          The full list of available <application>gsso-example</application> options can be 

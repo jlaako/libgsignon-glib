@@ -1,6 +1,6 @@
 Format: http://dep.debian.net/deps/dep5
 Upstream-Name: libgsignon-glib
-Source: http://code.google.com/p/accounts-sso/source/checkout?repo=libgsignon-glib
+Source: https://gitlab.com/accounts-sso/libgsignon-glib/tree/master
 
 Files: *
 Copyright: 2009 - 2010 Nokia Corporation
