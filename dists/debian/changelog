@@ -1,3 +1,11 @@
+libgsignon-glib (2.4.1-1) unstable; urgency=low
+
+  * Added Vala support
+  * Fixed GObject introspection
+  * Replaced GSimpleAsyncResult with GTask
+
+ -- Corentin Noël <corentin@elementary.io>  Tue, 26 Jan 2016 14:23:03 +0100
+
 libgsignon-glib (2.4.0-1) unstable; urgency=low
 
   * Corrected and updated widl file along with web SSO API extension

@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.64])
 AC_INIT([libgsignon-glib],
-        [2.4.0],
+        [2.4.1],
         [https://gitlab.com/accounts-sso/libgsignon-glib/issues],
         [libgsignon-glib],
         [https://gitlab.com/groups/accounts-sso])
