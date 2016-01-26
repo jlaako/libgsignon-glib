@@ -3,7 +3,7 @@
 
 Name:       libgsignon-glib
 Summary:    GLib API for the SSO framework
-Version:    2.4.0
+Version:    2.4.1
 Release:    1
 Group:      System/Libraries
 License:    LGPL-2.1
@@ -79,6 +79,11 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu Jan 26 2016 Corentin Noël <corentin@elementary.io>
+- Added Vala support
+- Fixed GObject introspection
+- Replaced GSimpleAsyncResult with GTask
+
 * Thu Feb 12 2015 Imran Zaman <imran.zaman@intel.com>
 - Corrected and updated widl file along with web SSO API extension
 - Fix typo in reading identity type from variant and updated tests
