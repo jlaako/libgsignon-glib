@@ -4,12 +4,14 @@ Priority: extra
 Maintainer: Jussi Laako <jussi.laako@linux.intel.com>
 Build-Depends: autotools-dev,
                debhelper (>= 9),
+               dh-autoreconf,
                gobject-introspection (>= 1.30.0),
                gtk-doc-tools,
                libdbus-1-dev,
                libgirepository1.0-dev (>= 1.30.0),
                libglib2.0-dev (>= 2.34),
-               pkg-config
+               pkg-config,
+               valac
 Standards-Version: 3.9.5
 Homepage: https://01.org/gsso
 Vcs-Git: https://gitlab.com/accounts-sso/libgsignon-glib.git
@@ -17,7 +19,8 @@ Vcs-Browser: https://gitlab.com/accounts-sso/libgsignon-glib/tree/master
 
 Package: libgsignon-glib1
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Multi-Arch: same
+Depends: ${misc:Depends}, ${shlibs:Depends}
 Description: gSSO client library
  gSSO is a single sign-on framework, providing secure storage and single sign-on service.
 
@@ -49,6 +52,7 @@ Description: GLib-based Single Sign On framework -- debugging symbols
 
 Package: libgsignon-glib-doc
 Section: doc
+Suggests: devhelp
 Architecture: all
 Depends: ${misc:Depends}
 Description: GLib-based Single Sign On framework -- documentation
@@ -60,9 +64,7 @@ Description: GLib-based Single Sign On framework -- documentation
 Package: gir1.2-gsignon-1.0
 Section: introspection
 Architecture: any
-Depends: ${gir:Depends},
-         ${misc:Depends},
-         ${shlibs:Depends}
+Depends: ${gir:Depends}, ${misc:Depends}, ${shlibs:Depends}
 Description: GLib-based Single Sign On framework -- gir bindings
  gSSO is a single sign-on framework, providing secure storage and single sign-on
  service.

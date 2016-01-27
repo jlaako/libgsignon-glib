@@ -1,19 +1,14 @@
 #!/usr/bin/make -f
 # -*- makefile -*-
 
-DEB_CONFIGURE_EXTRA_FLAGS += --enable-dbus-type=session
-
-# Optionally build a debug version
-#DEB_CONFIGURE_EXTRA_FLAGS += --enable-debug
-
 # Uncomment this to turn on verbose mode.
-export DH_VERBOSE=1
-
-# This has to be exported to make some magic below work.
-export DH_OPTIONS
+#export DH_VERBOSE=1
 
 %:
-	dh $@ --parallel
+	dh $@ --with autoreconf --parallel
+
+override_dh_autoreconf:
+	NOCONFIGURE=1 dh_autoreconf ./autogen.sh
 
 override_dh_auto_configure:
 	dh_auto_configure -- --enable-dbus-type=session --enable-gtk-doc --enable-introspection=yes
