@@ -1448,9 +1448,9 @@ void free_identity_info_cb (gpointer data)
 }
 
 void query_identities_cb (SignonAuthService *auth_service,
-    SignonIdentityList *identity_list, const GError *error, gpointer user_data)
+    GList *identity_list, const GError *error, gpointer user_data)
 {
-    SignonIdentityList *iter = identity_list;
+    GList *iter = identity_list;
 
     while (iter && !error)
     {

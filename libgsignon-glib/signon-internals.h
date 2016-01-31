@@ -137,7 +137,7 @@ struct _SignonIdentityInfo
     GHashTable *methods;
     gchar **realms;
     SignonSecurityContext *owner;
-    SignonSecurityContextList *access_control_list;
+    GList *access_control_list;
     gint type;
 };
 

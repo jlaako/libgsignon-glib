@@ -62,14 +62,6 @@ G_DEFINE_BOXED_TYPE (SignonSecurityContext, signon_security_context,
                      (GBoxedCopyFunc) signon_security_context_copy,
                      (GBoxedFreeFunc) signon_security_context_free);
 
-static void
-_security_context_free (gpointer ptr)
-{
-    SignonSecurityContext *ctx = (SignonSecurityContext *) ptr;
-
-    signon_security_context_free (ctx);
-}
-
 /**
  * signon_security_context_new:
  *
@@ -269,16 +261,15 @@ signon_security_context_deconstruct_variant (GVariant *variant)
 
 /**
  * signon_security_context_list_build_variant:
- * @list: #SignonSecurityContextList item.
+ * @list: (element-type SignonSecurityContext): #GList item of #SignonSecurityContext.
  *
  * Builds a GVariant of type "a(ss)" from a GList of #SignonSecurityContext
  * items.
  *
- * Returns: (transfer full): GVariant construct of a #SignonSecurityContextList.
+ * Returns: (transfer full): GVariant construct of a #GList.
  */
 GVariant *
-signon_security_context_list_build_variant (
-                                          const SignonSecurityContextList *list)
+signon_security_context_list_build_variant (const GList *list)
 {
     GVariantBuilder builder;
     GVariant *variant;
@@ -303,12 +294,12 @@ signon_security_context_list_build_variant (
  * Builds a GList of #SignonSecurityContext items from a GVariant of type
  * "a(ss)".
  *
- * Returns: (transfer full): #SignonSecurityContextList item.
+ * Returns: (transfer full) (element-type SignonSecurityContext): #GList item.
  */
-SignonSecurityContextList *
+GList *
 signon_security_context_list_deconstruct_variant (GVariant *variant)
 {
-    SignonSecurityContextList *list = NULL;
+    GList *list = NULL;
     GVariantIter iter;
     GVariant *value;
 
@@ -324,40 +315,3 @@ signon_security_context_list_deconstruct_variant (GVariant *variant)
 
     return list;
 }
-
-/**
- * signon_security_context_list_copy:
- * @src_list: source #SignonSecurityContextList.
- *
- * Copies a GList of #SignonSecurityContext items.
- *
- * Returns: (transfer full): #SignonSecurityContextList item.
- */
-SignonSecurityContextList *
-signon_security_context_list_copy (const SignonSecurityContextList *src_list)
-{
-    SignonSecurityContext *ctx;
-    SignonSecurityContextList *dst_list = NULL;
-
-    for ( ; src_list != NULL; src_list = g_list_next (src_list))
-    {
-        ctx = (SignonSecurityContext *) src_list->data;
-        dst_list = g_list_append (
-            dst_list, signon_security_context_copy (ctx));
-    }
-
-    return dst_list;
-}
-
-/**
- * signon_security_context_list_free:
- * @seclist: (transfer full): #SignonSecurityContextList item.
- *
- * Frees all items and the GList of #SignonSecurityContext.
- */
-void
-signon_security_context_list_free (SignonSecurityContextList *seclist)
-{
-    g_list_free_full (seclist, _security_context_free);
-}
-
