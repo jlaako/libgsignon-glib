@@ -116,7 +116,7 @@ static void query_auth_mechanisms(GMainLoop* main_loop, const gchar* method)
 }
 
 static void signon_query_identities_cb (SignonAuthService *auth_service,
-    SignonIdentityList *identity_list, const GError *error, gpointer user_data)
+    GList *identity_list, const GError *error, gpointer user_data)
 {
     GList *iter = identity_list;
     
@@ -136,7 +136,7 @@ static void signon_query_identities_cb (SignonAuthService *auth_service,
                  signon_identity_info_get_id (info),
                  signon_identity_info_get_caption (info));
 
-        SignonSecurityContextList *acl = signon_identity_info_get_access_control_list(info);
+        GList *acl = signon_identity_info_get_access_control_list(info);
         for(acl = g_list_first(acl); acl != NULL; acl = g_list_next(acl)) {
             const SignonSecurityContext *context = acl->data;
             g_print(" (%s:%s)", signon_security_context_get_system_context(context),
@@ -375,17 +375,22 @@ static void append_acl(GMainLoop* main_loop, gint identity_id, SignonSecurityCon
 static void remove_acl_cb(SignonIdentity *self, SignonIdentityInfo *info, const GError *error, gpointer user_data)
 {
     AclModifyUserData *am_user_data = (AclModifyUserData *)user_data;
+    GList *old_list, *new_list, *list_iter;
 
     if (error) {
         g_warning("%s: %s", G_STRFUNC, error->message);
         goto clean_user_data;
     }
 
-    SignonSecurityContextList *new_list = signon_security_context_list_copy(signon_identity_info_get_access_control_list(info));
-    SignonSecurityContextList *list_iter = new_list;
+    old_list = signon_identity_info_get_access_control_list (info);
+    for (old_list; old_list != NULL; old_list = g_list_next (old_list)) {
+        SignonSecurityContext *ctx = (SignonSecurityContext *) old_list->data;
+        new_list = g_list_append (new_list, signon_security_context_copy (ctx));
+    }
 
     gboolean list_changed = FALSE;
-    while(list_iter != NULL) {
+    list_iter = new_list;
+    for (list_iter; list_iter != NULL; list_iter = g_list_next (list_iter)) {
         SignonSecurityContext *curr_context = list_iter->data;
         if (g_strcmp0(signon_security_context_get_system_context(curr_context), am_user_data->security_context->sys_ctx) == 0
                 && g_strcmp0(signon_security_context_get_application_context(curr_context), am_user_data->security_context->app_ctx) == 0) {
@@ -394,14 +399,13 @@ static void remove_acl_cb(SignonIdentity *self, SignonIdentityInfo *info, const 
             list_changed = TRUE;
             break;
         }
-        list_iter = g_list_next(list_iter);
     }
 
     if (list_changed) {
         signon_identity_info_set_access_control_list(info, new_list);
         signon_identity_store_credentials_with_info(self, info, signon_store_identity_cb, am_user_data->main_loop);
     } else {
-        signon_security_context_list_free(new_list);
+        g_list_free_full (new_list, (GDestroyNotify) signon_security_context_free);
         g_main_loop_quit (am_user_data->main_loop);
     }
 

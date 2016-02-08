@@ -151,7 +151,7 @@ void signon_identity_store_credentials_with_args(SignonIdentity *self,
                         const gchar *caption,
                         const gchar* const *realms,
                         const SignonSecurityContext *owner,
-                        SignonSecurityContextList *access_control_list,
+                        GList *access_control_list,
                         SignonIdentityType type,
                         SignonIdentityStoreCredentialsCb cb,
                         gpointer user_data);

@@ -214,19 +214,19 @@ EXTRA_DIST =
 # Vala bindings
 if ENABLE_VAPIGEN
 -include $(VAPIGEN_MAKEFILE)
-libgsignon-glib.vapi: gSignon-1.0.gir libgsignon-glib.deps gSignon-1.0-custom.vala
+libgsignon-glib.vapi: gSignon-1.0.gir libgsignon-glib.deps
 
 VAPIGEN_VAPIS = libgsignon-glib.vapi
 
 libgsignon_glib_vapi_DEPS = gio-2.0 glib-2.0
 libgsignon_glib_vapi_METADATADIRS = $(srcdir)
-libgsignon_glib_vapi_FILES = gSignon-1.0.gir $(srcdir)/gSignon-1.0-custom.vala
+libgsignon_glib_vapi_FILES = gSignon-1.0.gir
 
 vapidir = $(datadir)/vala/vapi
 vapi_DATA = $(VAPIGEN_VAPIS) $(VAPIGEN_VAPIS:.vapi=.deps)
 
 CLEANFILES += $(VAPIGEN_VAPIS)
-EXTRA_DIST += libgsignon-glib.deps gSignon-1.0-custom.vala
+EXTRA_DIST += libgsignon-glib.deps gSignon-1.0.metadata
 endif
 
 dbusinterfacesdir = $(DBUS_INTERFACES_DIR)

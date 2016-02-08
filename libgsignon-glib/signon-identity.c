@@ -962,7 +962,8 @@ signon_identity_store_credentials_with_info(SignonIdentity *self,
  * @caption: (allow-none): caption.
  * @realms: (allow-none): allowed realms.
  * @owner: (allow-none): owner.
- * @access_control_list: (allow-none) (transfer container): access control list.
+ * @access_control_list: (allow-none) (transfer container) 
+ *      (element-type SignonSecurityContext): access control list.
  * @type: the type of the identity.
  * @cb: (scope async): callback.
  * @user_data: (closure): user_data.
@@ -978,7 +979,7 @@ void signon_identity_store_credentials_with_args(SignonIdentity *self,
                                                  const gchar *caption,
                                                  const gchar* const *realms,
                                                  const SignonSecurityContext *owner,
-                                                 SignonSecurityContextList *access_control_list,
+                                                 GList *access_control_list,
                                                  SignonIdentityType type,
                                                  SignonIdentityStoreCredentialsCb cb,
                                                  gpointer user_data)

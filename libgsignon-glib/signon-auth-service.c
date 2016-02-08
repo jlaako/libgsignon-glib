@@ -286,7 +286,7 @@ auth_query_identities_cb (GObject *object, GAsyncResult *res,
     GError *error = NULL;
     GVariantIter iter;
     GVariant *identity_var;
-    SignonIdentityList *identity_list = NULL;
+    GList *identity_list = NULL;
 
     g_return_if_fail (data != NULL);
 
@@ -317,7 +317,7 @@ auth_query_identities_cb (GObject *object, GAsyncResult *res,
 /**
  * SignonQueryIdentitiesCb:
  * @auth_service: the #SignonAuthService.
- * @identities: (transfer full): #GList based list of #SignonIdentityInfo.
+ * @identities: (element-type SignonIdentity): #GList based list of #SignonIdentityInfo.
  * @error: a #GError if an error occurred, %NULL otherwise.
  * @user_data: the user data that was passed when installing this callback.
  *
@@ -327,7 +327,7 @@ auth_query_identities_cb (GObject *object, GAsyncResult *res,
 /**
  * signon_auth_service_query_identities:
  * @auth_service: the #SignonAuthService.
- * @filter: filter variant dictionary based on #GHashTable.
+ * @filter: (element-type utf8 GVariant): filter variant dictionary based on #GHashTable.
  * @application_context: application security context, can be %NULL.
  * @cb: (scope async): callback to be invoked.
  * @user_data: user data.
@@ -359,7 +359,7 @@ auth_query_identities_cb (GObject *object, GAsyncResult *res,
  */
 void
 signon_auth_service_query_identities (SignonAuthService *auth_service,
-                                      SignonIdentityFilter *filter,
+                                      GHashTable *filter,
                                       const gchar *application_context,
                                       SignonQueryIdentitiesCb cb,
                                       gpointer user_data)

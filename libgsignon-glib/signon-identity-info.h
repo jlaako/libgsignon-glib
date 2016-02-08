@@ -74,7 +74,7 @@ const gchar* const *signon_identity_info_get_realms (
                                                 const SignonIdentityInfo *info);
 const SignonSecurityContext *signon_identity_info_get_owner (
                                                 const SignonIdentityInfo *info);
-SignonSecurityContextList *signon_identity_info_get_access_control_list (
+GList *signon_identity_info_get_access_control_list (
                                                 const SignonIdentityInfo *info);
 SignonIdentityType signon_identity_info_get_identity_type (
                                                 const SignonIdentityInfo *info);
@@ -103,7 +103,7 @@ void signon_identity_info_set_owner_from_values (SignonIdentityInfo *info,
                                             const gchar *system_context,
                                             const gchar *application_context);
 void signon_identity_info_set_access_control_list (SignonIdentityInfo *info,
-                                SignonSecurityContextList *access_control_list);
+                                GList *access_control_list);
 void signon_identity_info_access_control_list_append (SignonIdentityInfo *info,
                                     SignonSecurityContext *security_context);
 void signon_identity_info_set_identity_type (SignonIdentityInfo *info,

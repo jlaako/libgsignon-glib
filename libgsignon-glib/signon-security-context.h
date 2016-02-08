@@ -46,13 +46,6 @@ struct _SignonSecurityContext
     gchar *app_ctx;
 };
 
-/**
- * SignonSecurityContextList:
- *
- * GList of #SignonSecurityContext items.
- */
-typedef GList SignonSecurityContextList;
-
 GType signon_security_context_get_type (void) G_GNUC_CONST;
 
 SignonSecurityContext * signon_security_context_new ();
@@ -76,14 +69,8 @@ GVariant * signon_security_context_build_variant (
 SignonSecurityContext * signon_security_context_deconstruct_variant (
                                                             GVariant *variant);
 
-GVariant * signon_security_context_list_build_variant (
-                                        const SignonSecurityContextList *list);
-SignonSecurityContextList * signon_security_context_list_deconstruct_variant (
-                                                            GVariant *variant);
-
-SignonSecurityContextList * signon_security_context_list_copy (
-                                    const SignonSecurityContextList *src_list);
-void signon_security_context_list_free (SignonSecurityContextList *seclist);
+GVariant * signon_security_context_list_build_variant (const GList *list);
+GList * signon_security_context_list_deconstruct_variant (GVariant *variant);
 
 G_END_DECLS
 

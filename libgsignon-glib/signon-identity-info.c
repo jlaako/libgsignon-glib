@@ -43,8 +43,8 @@
 #include "signon-utils.h"
 
 G_DEFINE_BOXED_TYPE (SignonIdentityInfo, signon_identity_info,
-                     (GBoxedCopyFunc)signon_identity_info_copy,
-                     (GBoxedFreeFunc)signon_identity_info_free);
+                     signon_identity_info_copy,
+                     signon_identity_info_free);
 
 
 static GVariant *
@@ -343,7 +343,7 @@ void signon_identity_info_free (SignonIdentityInfo *info)
 
     g_strfreev (info->realms);
     signon_security_context_free (info->owner);
-    signon_security_context_list_free (info->access_control_list);
+    g_list_free_full (info->access_control_list, (GDestroyNotify) signon_security_context_free);
 
     g_slice_free (SignonIdentityInfo, info);
 }
@@ -468,7 +468,7 @@ GHashTable *signon_identity_info_get_methods (const SignonIdentityInfo *info)
  *
  * Get an array of the allowed realms of @info.
  *
- * Returns: (transfer none): a %NULL terminated array of realms.
+ * Returns: (transfer none) (array zero-terminated=1): a %NULL terminated array of realms.
  */
 const gchar* const *signon_identity_info_get_realms (const SignonIdentityInfo *info)
 {
@@ -496,9 +496,9 @@ const SignonSecurityContext *signon_identity_info_get_owner (const SignonIdentit
  *
  * Get an access control list associated with an identity. 
  *
- * Returns: (transfer none): a list of ACL security contexts.
+ * Returns: (transfer none) (element-type SignonSecurityContext): a list of ACL security contexts.
  */
-SignonSecurityContextList *signon_identity_info_get_access_control_list (const SignonIdentityInfo *info)
+GList *signon_identity_info_get_access_control_list (const SignonIdentityInfo *info)
 {
     g_return_val_if_fail (info != NULL, NULL);
     return info->access_control_list;
@@ -582,7 +582,7 @@ void signon_identity_info_set_caption (SignonIdentityInfo *info,
  * signon_identity_info_set_method:
  * @info: the #SignonIdentityInfo.
  * @method: an authentication method.
- * @mechanisms: a %NULL-terminated list of mechanisms.
+ * @mechanisms: (array zero-terminated=1): a %NULL-terminated list of mechanisms.
  *
  * Adds a method to the list of allowed authentication methods. 
  */
@@ -617,7 +617,7 @@ void signon_identity_info_remove_method (SignonIdentityInfo *info, const gchar *
 /**
  * signon_identity_info_set_realms:
  * @info: the #SignonIdentityInfo.
- * @realms: a %NULL-terminated list of realms.
+ * @realms: (array zero-terminated=1): a %NULL-terminated list of realms.
  *
  * Specify what realms this identity can be used in. 
  */
@@ -678,20 +678,22 @@ void signon_identity_info_set_owner_from_values (
 /**
  * signon_identity_info_set_access_control_list:
  * @info: the #SignonIdentityInfo.
- * @access_control_list: (transfer none): a list of ACL security contexts.
+ * @access_control_list: (element-type SignonSecurityContext): a list of ACL security contexts.
  *
  * Set an access control list associated with an identity. 
  */
 void signon_identity_info_set_access_control_list (SignonIdentityInfo *info,
-                                 SignonSecurityContextList *access_control_list)
+                                 GList *access_control_list)
 {
     g_return_if_fail (info != NULL);
-
-    SignonSecurityContextList *new_acl =
-        signon_security_context_list_copy (access_control_list);
+    GList *new_acl = NULL;
+    for (; access_control_list != NULL; access_control_list = g_list_next (access_control_list)) {
+        SignonSecurityContext *ctx = (SignonSecurityContext *) access_control_list->data;
+        new_acl = g_list_append (new_acl, signon_security_context_copy (ctx));
+    }
 
     if (info->access_control_list)
-        signon_security_context_list_free (info->access_control_list);
+        g_list_free_full (info->access_control_list, (GDestroyNotify) signon_security_context_free);
 
     info->access_control_list = new_acl;
 }
