@@ -27,7 +27,7 @@
 
 #include <glib.h>
 #include <glib-object.h>
-#include "signon-enum-types.h"
+#include <libgsignon-glib/signon-enum-types.h>
 
 /**
  * SIGNON_ERROR:

@@ -12,7 +12,7 @@ export SSO_AUTHSESSION_TIMEOUT=5
 export G_MESSAGES_DEBUG=all
 export G_SLICE=debug-blocks
 
-TEST_APP=./signon-glib-testsuite
+TEST_APP="$TESTDIR/signon-glib-test-wrapper.sh"
 
 # If dbus-test-runner exists, use it to run the tests in a separate D-Bus
 # session
