@@ -10,7 +10,7 @@ AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 
-AM_INIT_AUTOMAKE([1.11 nostdinc silent-rules subdir-objects tar-pax -Wno-portability])
+AM_INIT_AUTOMAKE([1.11 nostdinc foreign silent-rules subdir-objects tar-pax -Wno-portability])
 
 AC_PROG_CC
 AC_PROG_CC_STDC

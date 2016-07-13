@@ -1,0 +1,45 @@
+image: ubuntu:xenial
+
+cache:
+  key: apt-cache
+  paths:
+  - apt-cache/
+
+before_script:
+  - export APT_CACHE_DIR=`pwd`/apt-cache && mkdir -pv $APT_CACHE_DIR
+  - apt-get update -yq && apt-get -o dir::cache::archives="$APT_CACHE_DIR" install -y autotools-dev gobject-introspection gtk-doc-tools libdbus-1-dev libgirepository1.0-dev libglib2.0-dev pkg-config valac
+
+build_amd64:
+  stage: build
+  script:
+    - NOCONFIGURE=1 ./autogen.sh
+    - mkdir build
+    - cd build
+    - ../configure --enable-dbus-type=session --enable-gtk-doc --enable-introspection=yes
+    - make -j 4
+  artifacts:
+    paths:
+      - ./
+
+test_amd64:
+  stage: test
+  script:
+    - find build | xargs touch # Avoid rebuilding
+    - cd build
+    - make check
+  dependencies:
+    - build_amd64
+  artifacts:
+    paths:
+      - ./
+
+pages:
+  stage: deploy
+  script:
+    - mkdir public
+    - cp -a build/docs/reference/html/* public
+  dependencies:
+    - test_amd64
+  artifacts:
+    paths:
+      - public

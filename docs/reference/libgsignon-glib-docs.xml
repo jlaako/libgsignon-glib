@@ -10,8 +10,8 @@
     <releaseinfo>
       This document is for libgsignon-glib, version &version;. The latest
       version of this documentation can be found on-line at
-      <ulink role="online-location" url="http://gsignon-docs.accounts-sso.googlecode.com/git/libgsignon-glib/index.html">
-      http://gsignon-docs.accounts-sso.googlecode.com/git/libgsignon-glib/index.html</ulink>.
+      <ulink role="online-location" url="http://accounts-sso.gitlab.io/libgsignon-glib/index.html">
+      http://accounts-sso.gitlab.io/libgsignon-glib/index.html</ulink>.
     </releaseinfo>
   </bookinfo>
 
