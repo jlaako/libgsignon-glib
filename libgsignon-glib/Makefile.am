@@ -196,6 +196,7 @@ gSignon_1_0_gir_SCANNERFLAGS = \
 	--warn-all
 gSignon_1_0_gir_CFLAGS = \
 	-I$(top_srcdir) \
+	-I$(top_builddir) \
 	$(DEPS_CFLAGS)
 gSignon_1_0_gir_LIBS = libgsignon-glib.la
 gSignon_1_0_gir_FILES = $(introspection_sources)

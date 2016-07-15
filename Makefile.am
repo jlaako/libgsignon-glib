@@ -21,9 +21,6 @@ dist_noinst_DATA = \
 	m4/introspection.m4
 
 dist-hook: git-changelog-hook
-	@echo
-	@echo "==== Run 'make update-online-doc' to update online documentation ===="
-	@echo
 
 git-changelog-hook: Makefile
 	$(AM_V_at)if $(top_srcdir)/build-aux/missing --run git \
@@ -42,25 +39,6 @@ valgrind:
 EXTRA_DIST = dists tools
 
 .PHONY:  git-changelog-hook
-
-update-online-doc:
-	@tar zxf $(PACKAGE)-$(VERSION).tar.gz && \
-	pushd . > /dev/null && \
-	cd .. && \
-	git clone https://gitlab.com/accounts-sso/gsignon-docs.git ; \
-	cd gsignon-docs && \
-	git pull ; \
-	mkdir -p $(PACKAGE) && \
-	rm -rf $(PACKAGE)/* && \
-	popd > /dev/null && \
-	cp -rf $(PACKAGE)-$(VERSION)/docs/reference/html/* ../gsignon-docs/$(PACKAGE)/ && \
-	pushd . > /dev/null && \
-	cd ../gsignon-docs && \
-	git add $(PACKAGE)/* && \
-	git commit -m "Updated documentation for $(PACKAGE) to version $(VERSION)" && \
-	git push ; \
-	popd > /dev/null && \
-	rm -rf $(PACKAGE)-$(VERSION)
 
 lcov: check
 	@rm -rf lcov-report

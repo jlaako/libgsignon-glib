@@ -1,6 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
-TESTS_ENVIRONMENT= SSO_LOGGING_LEVEL=2 SSO_STORAGE_PATH=/tmp/gsignond \
+TESTS_ENVIRONMENT=TESTDIR=$(top_srcdir)/tests/; export TESTDIR;\
+SSO_LOGGING_LEVEL=2 SSO_STORAGE_PATH=/tmp/gsignond \
 SSO_SECRET_PATH=/tmp/gsignond SSO_DAEMON_TIMEOUT=5 SSO_IDENTITY_TIMEOUT=5 \
 SSO_AUTHSESSION_TIMEOUT=5 G_MESSAGES_DEBUG=all G_SLICE=debug-blocks
 
@@ -20,6 +21,7 @@ dist_check_SCRIPTS = signon-glib-test.sh
 signon_glib_testsuite_SOURCES = check_signon.c
 signon_glib_testsuite_CPPFLAGS = \
 	-I$(top_srcdir) \
+	-I$(top_builddir) \
 	$(DEPS_CFLAGS) \
 	$(CHECK_FLAGS)
 signon_glib_testsuite_LDADD = \
