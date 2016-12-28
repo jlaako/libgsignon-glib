@@ -146,7 +146,7 @@ signon-errors-enum.c: Makefile signon-errors.h
 	    --fprod "\n/* enumerations from \"@filename@\" */" \
 	    --ftail "\n#define __SIGNON_ENUM_TYPES_C__\n" \
 	    --vhead "GType\n@enum_name@_get_type (void)\n{\n  static GType etype = 0;\n  if (etype == 0) {\n    static const G@Type@Value values[] = {" \
-	    --vprod "      { @VALUENAME@, SED@VALUENAME@, \"@valuenick@\" }," \
+	    --vprod "      { @VALUENAME@, \"@VALUENAME@\", \"@valuenick@\" }," \
 	    --vtail "      { 0, NULL, NULL }\n    };\n    etype = g_@type@_register_static (g_intern_static_string (\"@EnumName@\"), values);\n  }\n  return etype;\n}\n" \
 	    signon-errors.h ) | \
 	    $(SED) -e 's/SEDSIGNON_ERROR_\([^,]*\)/SIGNOND_\1_ERR_NAME/' \
