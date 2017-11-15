@@ -207,7 +207,7 @@ signon_identity_info_new_from_variant (GVariant *variant)
 
     g_variant_lookup (variant,
                       SIGNOND_IDENTITY_INFO_TYPE,
-                      "i",
+                      "u",
                       &info->type);
 
     return info;
@@ -297,7 +297,7 @@ signon_identity_info_to_variant (const SignonIdentityInfo *self)
 
     g_variant_builder_add (&builder, "{sv}",
                            SIGNOND_IDENTITY_INFO_TYPE,
-                           g_variant_new_int32 (self->type));
+                           g_variant_new_uint32 (self->type));
 
     return g_variant_builder_end (&builder);
 }
