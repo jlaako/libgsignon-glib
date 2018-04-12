@@ -87,7 +87,7 @@ typedef void (*SignonQueryIdentitiesCb) (SignonAuthService *auth_service,
                                          const GError *error,
                                          gpointer user_data);
 
-SignonAuthService *signon_auth_service_new ();
+SignonAuthService *signon_auth_service_new (void);
 
 void signon_auth_service_query_methods (SignonAuthService *auth_service,
                                         SignonQueryMethodsCb cb,

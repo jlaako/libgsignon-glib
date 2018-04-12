@@ -382,15 +382,13 @@ static void remove_acl_cb(SignonIdentity *self, SignonIdentityInfo *info, const 
         goto clean_user_data;
     }
 
-    old_list = signon_identity_info_get_access_control_list (info);
-    for (old_list; old_list != NULL; old_list = g_list_next (old_list)) {
+    for (old_list = signon_identity_info_get_access_control_list (info); old_list != NULL; old_list = g_list_next (old_list)) {
         SignonSecurityContext *ctx = (SignonSecurityContext *) old_list->data;
         new_list = g_list_append (new_list, signon_security_context_copy (ctx));
     }
 
     gboolean list_changed = FALSE;
-    list_iter = new_list;
-    for (list_iter; list_iter != NULL; list_iter = g_list_next (list_iter)) {
+    for (list_iter = new_list; list_iter != NULL; list_iter = g_list_next (list_iter)) {
         SignonSecurityContext *curr_context = list_iter->data;
         if (g_strcmp0(signon_security_context_get_system_context(curr_context), am_user_data->security_context->sys_ctx) == 0
                 && g_strcmp0(signon_security_context_get_application_context(curr_context), am_user_data->security_context->app_ctx) == 0) {

@@ -35,7 +35,7 @@ typedef struct {
 } SignonReadyData;
 
 static GQuark
-_signon_object_ready_quark()
+_signon_object_ready_quark(void)
 {
   static GQuark quark = 0;
 
@@ -46,7 +46,7 @@ _signon_object_ready_quark()
 }
 
 static GQuark
-_signon_object_error_quark()
+_signon_object_error_quark(void)
 {
   static GQuark quark = 0;
 

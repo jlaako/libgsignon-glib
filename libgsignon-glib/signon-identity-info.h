@@ -59,7 +59,7 @@ typedef enum {
 
 GType signon_identity_info_get_type (void) G_GNUC_CONST;
 
-SignonIdentityInfo *signon_identity_info_new ();
+SignonIdentityInfo *signon_identity_info_new (void);
 void signon_identity_info_free (SignonIdentityInfo *info);
 
 SignonIdentityInfo *signon_identity_info_copy (const SignonIdentityInfo *other);

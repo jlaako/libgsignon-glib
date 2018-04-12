@@ -31,7 +31,7 @@ static GHashTable *thread_objects = NULL;
 static GMutex map_mutex;
 
 static SsoAuthService *
-get_singleton ()
+get_singleton (void)
 {
     SsoAuthService *object = NULL;
 
@@ -96,7 +96,7 @@ _on_auth_service_destroyed (gpointer data, GObject *obj)
 
 
 SsoAuthService *
-sso_auth_service_get_instance ()
+sso_auth_service_get_instance (void)
 {
     SsoAuthService *sso_auth_service = NULL;
     GDBusConnection *connection = NULL;

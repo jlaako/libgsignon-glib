@@ -141,7 +141,7 @@ signon_auth_service_class_init (SignonAuthServiceClass *klass)
  * Returns: an instance of an #SignonAuthService.
  */
 SignonAuthService *
-signon_auth_service_new ()
+signon_auth_service_new (void)
 {
     return g_object_new (SIGNON_TYPE_AUTH_SERVICE, NULL);
 }

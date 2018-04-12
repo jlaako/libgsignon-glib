@@ -54,7 +54,7 @@ static gboolean id_destroyed = FALSE;
 #define SIGNOND_IDLE_TIMEOUT (5 + 2)
 
 static void
-_stop_mainloop ()
+_stop_mainloop (void)
 {
     if (main_loop) {
         g_main_loop_quit (main_loop);
@@ -62,7 +62,7 @@ _stop_mainloop ()
 }
 
 static void
-_run_mainloop ()
+_run_mainloop (void)
 {
     if (main_loop)
         g_main_loop_run (main_loop);
@@ -70,7 +70,7 @@ _run_mainloop ()
 
 
 static void
-_setup ()
+_setup (void)
 {
 #if !GLIB_CHECK_VERSION (2, 36, 0)
     g_type_init ();
@@ -81,7 +81,7 @@ _setup ()
 }
 
 static void
-_teardown ()
+_teardown (void)
 {
     if (auth_service)
     {
@@ -125,7 +125,7 @@ new_identity_store_credentials_cb(
 }
 
 static guint
-new_identity()
+new_identity(void)
 {
     SignonIdentity *idty;
     GHashTable *methods;
@@ -169,7 +169,7 @@ START_TEST(test_init)
 END_TEST
 
 static void
-signon_query_methods_cb (SignonAuthService *auth_service, gchar **methods,
+signon_query_methods_cb (SignonAuthService *_auth_service, gchar **methods,
                          GError *error, gpointer user_data)
 {
     if (error)
@@ -216,7 +216,7 @@ START_TEST(test_query_methods)
 END_TEST
 
 static void
-signon_query_mechanisms_cb (SignonAuthService *auth_service, gchar *method,
+signon_query_mechanisms_cb (SignonAuthService *_auth_service, gchar *method,
         gchar **mechanisms, GError *error, gpointer user_data)
 {
     if (error)
@@ -257,7 +257,7 @@ signon_query_mechanisms_cb (SignonAuthService *auth_service, gchar *method,
 }
 
 static void
-signon_query_mechanisms_cb_fail (SignonAuthService *auth_service,
+signon_query_mechanisms_cb_fail (SignonAuthService *_auth_service,
                                  gchar *method,
                                  gchar **mechanisms,
                                  GError *error, gpointer user_data)
@@ -780,7 +780,7 @@ START_TEST(test_auth_session_process_after_store)
 }
 END_TEST
 
-static GHashTable *create_methods_hashtable()
+static GHashTable *create_methods_hashtable(void)
 {
     gchar *mechanisms[] = {
             "mechanism1",
@@ -1140,7 +1140,7 @@ static void identity_info_cb(SignonIdentity *self, SignonIdentityInfo *info, con
      _stop_mainloop ();
 }
 
-static SignonIdentityInfo *create_standard_info()
+static SignonIdentityInfo *create_standard_info(void)
 {
     GHashTable *methods;
 
@@ -1442,12 +1442,12 @@ END_TEST
 
 void free_identity_info_cb (gpointer data)
 {
-    SignonIdentityInfo *info;
+    SignonIdentityInfo *info = (SignonIdentityInfo *)data;
 
     signon_identity_info_free (info);
 }
 
-void query_identities_cb (SignonAuthService *auth_service,
+void query_identities_cb (SignonAuthService *_auth_service,
     GList *identity_list, const GError *error, gpointer user_data)
 {
     GList *iter = identity_list;

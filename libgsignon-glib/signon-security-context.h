@@ -48,7 +48,7 @@ struct _SignonSecurityContext
 
 GType signon_security_context_get_type (void) G_GNUC_CONST;
 
-SignonSecurityContext * signon_security_context_new ();
+SignonSecurityContext * signon_security_context_new (void);
 SignonSecurityContext * signon_security_context_new_from_values (
                                             const gchar *system_context,
                                             const gchar *application_context);

@@ -313,7 +313,7 @@ signon_identity_info_to_variant (const SignonIdentityInfo *self)
  *
  * Returns: a new #SignonIdentityInfo item.
  */
-SignonIdentityInfo *signon_identity_info_new ()
+SignonIdentityInfo *signon_identity_info_new (void)
 {
     SignonIdentityInfo *info = g_slice_new0 (SignonIdentityInfo);
     info->methods = g_hash_table_new_full (g_str_hash,

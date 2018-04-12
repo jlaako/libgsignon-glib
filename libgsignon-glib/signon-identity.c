@@ -296,7 +296,7 @@ static void identity_session_object_destroyed_cb (gpointer data,
                                                   GObject *where_the_session_was);
 
 static GQuark
-identity_object_quark ()
+identity_object_quark (void)
 {
   static GQuark quark = 0;
 

@@ -70,7 +70,7 @@ G_DEFINE_BOXED_TYPE (SignonSecurityContext, signon_security_context,
  * Returns: (transfer full): allocated #SignonSecurityContext.
  */
 SignonSecurityContext *
-signon_security_context_new ()
+signon_security_context_new (void)
 {
     SignonSecurityContext *ctx;
 

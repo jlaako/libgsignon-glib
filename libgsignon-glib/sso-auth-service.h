@@ -30,7 +30,7 @@
 G_BEGIN_DECLS
 
 G_GNUC_INTERNAL
-SsoAuthService *sso_auth_service_get_instance ();
+SsoAuthService *sso_auth_service_get_instance (void);
 
 G_END_DECLS
 

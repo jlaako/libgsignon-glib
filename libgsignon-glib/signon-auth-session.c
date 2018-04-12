@@ -243,7 +243,7 @@ process_async_cb_wrapper (GObject *object, GAsyncResult *res,
 }
 
 static GQuark
-auth_session_object_quark ()
+auth_session_object_quark (void)
 {
   static GQuark quark = 0;
 
