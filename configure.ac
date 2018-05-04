@@ -16,10 +16,6 @@ AC_PROG_CC
 AC_PROG_CC_STDC
 AM_PROG_CC_C_O
 AM_PROG_AR
-AX_CHECK_GNU_MAKE
-if test "x$ifGNUmake" = "x#" ; then
-    AC_MSG_ERROR("GNUmake is required")
-fi
 
 LT_PREREQ([2.2])
 LT_INIT([disable-static])
