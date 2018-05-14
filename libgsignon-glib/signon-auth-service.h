@@ -35,7 +35,6 @@ G_BEGIN_DECLS
 #define SIGNON_AUTH_SERVICE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), SIGNON_TYPE_AUTH_SERVICE, SignonAuthService))
 #define SIGNON_AUTH_SERVICE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), SIGNON_TYPE_AUTH_SERVICE, SignonAuthServiceClass))
 #define SIGNON_IS_AUTH_SERVICE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), SIGNON_TYPE_AUTH_SERVICE))
-#define SIGNON_IS_AUTH_SERVICE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), SIGNON_TYPE_AUTH_SERVICE))
 #define SIGNON_AUTH_SERVICE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), SIGNON_TYPE_AUTH_SERVICE, SignonAuthServiceClass))
 
 typedef struct _SignonAuthServiceClass SignonAuthServiceClass;
