@@ -95,7 +95,6 @@ typedef struct _AuthSessionProcessData
 {
     GVariant *session_data;
     gchar *mechanism;
-    GCancellable *cancellable;
 } AuthSessionProcessData;
 
 typedef struct _AuthSessionQueryAvailableMechanismsCbData
@@ -178,9 +177,8 @@ auth_session_process_ready_cb (gpointer object, const GError *error, gpointer us
 
     if (error != NULL)
     {
-        GError *error_copy = g_error_copy (error);
-        DEBUG ("AuthSessionError: %s", error_copy->message);
-        g_task_return_error (task, error_copy);
+        DEBUG ("AuthSessionError: %s", error->message);
+        g_task_return_error (task, g_error_copy (error));
         g_object_unref (task);
         return;
     }
@@ -204,7 +202,7 @@ auth_session_process_ready_cb (gpointer object, const GError *error, gpointer us
     sso_auth_session_call_process (priv->proxy,
                                    process_data->session_data,
                                    process_data->mechanism,
-                                   process_data->cancellable,
+                                   g_task_get_cancellable (task),
                                    auth_session_process_reply,
                                    task);
 }
@@ -627,7 +625,6 @@ signon_auth_session_process_async (SignonAuthSession *self,
     process_data = g_slice_new0 (AuthSessionProcessData);
     process_data->session_data = g_variant_ref_sink (session_data);
     process_data->mechanism = g_strdup (mechanism);
-    process_data->cancellable = cancellable;
     g_task_set_task_data (task, process_data, (GDestroyNotify) auth_session_process_data_free);
 
     priv->busy = TRUE;
